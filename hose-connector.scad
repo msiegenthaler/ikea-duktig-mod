@@ -1,5 +1,5 @@
 hose_size = 12.7;
-// barb(hose_size, 2);
+inner_hose_size = hose_size * 0.75;
 
 // Generate a single barb notch
 module barbnotch( inside_diameter ){
@@ -19,6 +19,6 @@ module barb( inside_diameter, count )
 {
   difference() {
     solidbarbstack( inside_diameter, count );
-    translate([0,0,-0.3]) cylinder( h = inside_diameter * (count + 1), r = inside_diameter * 0.75 / 2, $fa = 0.5, $fs = 0.5 );
+    translate([0,0,-0.3]) cylinder( h = inside_diameter * (count + 1), r = inner_hose_size / 2, $fa = 0.5, $fs = 0.5 );
   }
 }
