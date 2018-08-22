@@ -26,31 +26,37 @@ difference() {
 
 module base() {
   w = board_width + 2*board_holder_s;
-  d = board_thickness + board_holder_s;
-  h2 = board_thickness + board_holder_s;
-  difference() {
-    translate([-w/2,0,0]) {
-      cube([w, height, thickness]);
-      stabilize_on_board();
-      linear_extrude(thickness) polygon([
-        [0  ,0],
-        [w , 0],
-        [w , -h2],
-        [w-board_holder_s, -h2],
-        [w-board_holder_s-board_overlap, -board_thickness],
-        [w-board_holder_s-board_overlap, 0],
-        [board_holder_s+board_overlap, 0],
-        [board_holder_s+board_overlap, -board_thickness],
-        [board_holder_s, -h2],
-        [0, -h2],
-      ]);
-    }
-    board_with_gap();
+  translate([-w/2,0,0]) {
+    cube([w, height, thickness]);
+    stabilize_on_board(w);
+    holder_flaps();
   }
 }
 
-module stabilize_on_board() {
+module holder_flaps(w) {
+  d = 100;
+  h = board_thickness + 2*board_gap;
+  h2 = h + board_holder_s;
   w = board_width + 2*board_holder_s;
+  a = board_holder_s - board_gap;
+  b = board_holder_s + board_overlap;
+  linear_extrude(thickness) polygon([
+    [0  ,0],
+    [w , 0],
+    [w , -h2],
+    [w-board_holder_s, -h2],
+    [w-b, -h],
+    [w-a, -h],
+    [w-a, 0],
+    [a, 0],
+    [a, -board_thickness],
+    [b, -board_thickness],
+    [a, -h2],
+    [0, -h2],
+  ]);
+}
+
+module stabilize_on_board(w) {
   translate([w,0,0]) rotate([0,-90,0]) linear_extrude(w) polygon([
     [0,0],
     [stabilizator,0],
@@ -65,10 +71,6 @@ module board_with_gap() {
   w = board_width+2*board_gap;
   translate([-w/2,-h,-d/2])
     cube([w, h, d]);
-}
-
-module air_cutout() {
-  polygon([[20,15],[75,10],[80,50]]);
 }
 
 module cutout_front() {
