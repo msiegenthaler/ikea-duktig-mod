@@ -1,5 +1,5 @@
 height = 120;
-thickness = 4;
+thickness = 5;
 
 stabilizator = 10;
 stabilizator_h = 7;
@@ -11,8 +11,28 @@ board_holder_s = 10;
 board_holder_t = 1;
 board_overlap = 5;
 
+connector_size = 5;
+connector_bolt_d = 1.5;
+connector_bolt_depth = 2;
+connector_bolt_gap = 0.15;
+
+front_back_distance = 150;
+
 // holder_front();
-holder_back();
+// holder_back();
+composite();
+// connector();
+
+module composite() {
+  x = (board_width + 2*board_holder_s)/2 - connector_size/2;
+  y = height - connector_size;
+  holder_front();
+  translate([0,0,-front_back_distance]) rotate([0,180,0]) holder_back();
+  translate([x,0,0]) connector();
+  translate([-x,0,0]) connector();
+  translate([x,y,0]) connector();
+  translate([-x,y,0]) connector();
+}
 
 module holder_front() {
 container_lift = 34;
@@ -34,13 +54,36 @@ module holder_back() {
   }
 }
 
+module connector() {
+  z = front_back_distance-2*connector_bolt_gap;
+  translate([-connector_size/2,0,-front_back_distance+connector_bolt_gap]) {
+    cube([connector_size, connector_size, z]);
+    #translate([connector_size/2, connector_size/2, -connector_bolt_depth]) connector_bolt(false);
+    #translate([connector_size/2, connector_size/2, z]) connector_bolt(false);
+  }
+}
+
 module base() {
   w = board_width + 2*board_holder_s;
   translate([-w/2,0,0]) {
-    cube([w, height, thickness]);
-    stabilize_on_board(w);
-    holder_flaps();
+    difference() {
+      union() {
+        cube([w, height, thickness]);
+        translate([0,0,thickness]) stabilize_on_board(w);
+        holder_flaps();
+      }
+      translate([connector_size/2,connector_size/2,0]) connector_bolt(true);
+      translate([w-connector_size/2,connector_size/2,0]) connector_bolt(true);
+      translate([connector_size/2,height-connector_size/2,0]) connector_bolt(true);
+      translate([w-connector_size/2,height-connector_size/2,0]) connector_bolt(true);
+    }
   }
+}
+
+module connector_bolt(negative = false) {
+  k = 0;
+  if (!negative) { k = connector_bolt_depth; }
+  cylinder(d=connector_bolt_d-k*2, h=connector_bolt_depth-k, $fa=1, $fs=0.1);
 }
 
 module holder_flaps() {
