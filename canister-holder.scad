@@ -1,7 +1,5 @@
 height = 120;
-container_lift = 34;
-// TODO 
-thickness = 1;
+thickness = 4;
 
 stabilizator = 10;
 stabilizator_h = 7;
@@ -10,17 +8,29 @@ board_width = 180;
 board_thickness = 12.0;
 board_gap = 0.2;
 board_holder_s = 10;
+board_holder_t = 1;
 board_overlap = 5;
 
+// holder_front();
+holder_back();
 
-difference() {
-  base();
-  translate([0,container_lift,50]) rotate([180,0,0]) {
-    cutout_front();
+module holder_front() {
+container_lift = 34;
+  difference() {
+    base();
+    translate([0,container_lift,50]) rotate([180,0,0]) {
+      cutout_front();
+    }
   }
-  translate([0,0,-50]) linear_extrude(100) {
-    air_cutout();
-    rotate([0,180,0]) air_cutout();
+}
+
+module holder_back() {
+  container_lift = 5;
+  difference() {
+    base();
+    translate([0,container_lift,50]) rotate([180,0,0]) {
+      cutout_back();
+    }
   }
 }
 
@@ -33,14 +43,13 @@ module base() {
   }
 }
 
-module holder_flaps(w) {
-  d = 100;
+module holder_flaps() {
   h = board_thickness + 2*board_gap;
   h2 = h + board_holder_s;
   w = board_width + 2*board_holder_s;
   a = board_holder_s - board_gap;
   b = board_holder_s + board_overlap;
-  linear_extrude(thickness) polygon([
+  linear_extrude(board_holder_t) polygon([
     [0  ,0],
     [w , 0],
     [w , -h2],
@@ -106,5 +115,46 @@ module cutout_front() {
   scale([size,size]) {
     translate([w,-h],0) rotate([0,0,90]) linear_extrude(d) polygon(points = ps);
     translate([-w,-h,d]) rotate([180,0,90]) linear_extrude(d) polygon(points = ps);
+  }
+}
+
+module cutout_back() {
+  size = 4;
+  w = 17.3;   //width at the end
+  add_h = 50; //additional height
+  h = 11.8;
+  d = 100;
+  ps = [
+    [ 0,   0],
+    [ 0,   0.7],
+    [ 9,   0.7],
+    [10,   0.9],
+    [10.25, 1],
+    [11.1, 2],
+    [11.4, 3],
+    [11.5, 4],
+    [11.6, 5],
+    [11.6, 6],
+    [11.6, 7],
+    [11.67, 8],
+    [11.78, 9],
+    [11.9, 10],
+    [12.1, 11],
+    [12.45, 12],
+    [13.1, 13],
+    [14.0, 14],
+    [15.0, 15],
+    [16,   15.8],
+    [17,   16.3],
+    [18,   16.7],
+    [19,   17.0],
+    [20,   17.2],
+    [21,   17.3],
+    [add_h,w],
+    [add_h,0],
+  ];
+  scale([size,size]) {
+    rotate([0,0,-90]) linear_extrude(d) polygon(points = ps);
+    translate([0,0,d])rotate([180,0,-90]) linear_extrude(d) polygon(points = ps);
   }
 }
