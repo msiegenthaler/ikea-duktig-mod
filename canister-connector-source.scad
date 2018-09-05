@@ -4,13 +4,13 @@ include <hose-connector.scad>;
 barb_count = 2;
 barb_offset = 10;
 
-snorkel_h = 220;
+snorkel_h = 200-13;
 snorkel_d = 6;
 snorkel_d_inner = snorkel_d - 2*1.2;
 snorkel_d_top = 2;
 snorkel_offset = 6;
 
-canister_cap_connector();
+rotate([0,180,0]) canister_cap_connector();
 
 module canister_cap_connector() {
   difference() {

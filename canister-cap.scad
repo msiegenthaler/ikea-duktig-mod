@@ -6,7 +6,7 @@ rotations = 3;
 step = 5;
 tolerance = 1.1;
 
-side_wall = 2.2;
+side_wall = 4;
 top_wall = 1.8;
 height = pitch * (rotations + 0.5);
 
