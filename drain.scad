@@ -11,9 +11,28 @@ drain_hole_depth = 13;
 barb_count = 2;
 wall_strength = 1;
 
-rotate([0,180,0])
-  drain();
+// drain();
+drain_top();
 
+module drain_top() {
+  h = 0.6;
+  n = 16;
+  l = 5; w = 2; h_notch = 0.6;
+  difference() {
+    union() {
+      cylinder(d=drain_cutout_d, h=h, $fa=1, $fs=0.1);
+      intersection() {
+        translate([0,0,-0.01]) cylinder(d=drain_cutout_d+l*2, h=h+h_notch+0.02, $fa=1, $fs=0.1);
+        for (i=[0:n]) {
+          rotate([0,0,i*360/n]) 
+            translate([0,-w/2,h])
+              cube([drain_hole_diameter+l, w, h_notch]);
+        }
+      }
+    }
+    translate([0,0,-0.01]) cylinder(d=drain_hole_diameter, h=h+h_notch+0.02, $fa=1, $fs=0.1);
+  }
+}
 
 module attachment() {
   margin_d = 20;
